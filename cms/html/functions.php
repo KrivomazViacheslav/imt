@@ -1,5 +1,9 @@
 <?php
 header('Content-Type: text/html; charset=utf-8');
+if(isset($_SERVER) && $_SERVER['HTTP_HOST'] && $_SERVER['REQUEST_URI']) {
+    setcookie('lastURI', $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], time()+3600*24*30, '/');
+}
+setcookie('time', date('m-d-Y:H:i:s'), time()+3600*24*30, '/');
 ini_set('display_errors',true);
 error_reporting(E_ALL);
 require_once 'data/menu.php';
@@ -58,14 +62,27 @@ function viewMenu($pages) {
         echo '</ul>';
     }
 }
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+function viewFooter() {
+   
+     if (isset($_COOKIE['lastURI'])) {
+        echo 'Последняя посещенная страница: '.$_COOKIE['lastURI'];
+        if (isset($_COOKIE['time'])) {
+            echo ' в '.$_COOKIE['time'];
+        }
+    }
+
+   
+}
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 function getPage($pages,$page_id) {
     if($page_id) {
         return $pages[$page_id];
     }
 }
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-function getProduct($id) {
+function getProduct($products,$id) {
     if($id) {
-        //дальше сами)
+        return $products[$id];
     }
 }

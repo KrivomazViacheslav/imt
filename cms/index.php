@@ -29,12 +29,16 @@
             </div>
             <div class="col-lg-8 panel panel-default">
                 <h2 class="panel-heading">Content</h2>
-
-                <div> <?php require_once 'html/content.php'?></div>
+                <div>
+                    <?php require_once 'html/content.php'?>
+                </div>
             </div>
             <div class="row col-lg-12">
                 <div class="panel-footer">
                     <h2 class="panel-heading">Footer</h2>
+                    <div>
+                        <?php viewFooter(); ?>
+                    </div> 
                 </div>
             </div>
         </div>
