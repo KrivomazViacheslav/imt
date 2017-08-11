@@ -21,6 +21,13 @@
                     <span class="label label-info">Цена товара: <?php echo ceil($product->variant->price) ?> грн.</span>
                 <?php endif;?>
             </div>
+            <div>
+                <form method="get">
+                    <input type="number" name="amount" value="1">
+                    <input type="hidden" name="product_id" value=<?php echo $id ?>>
+                    <input type="submit" name="buy" value="Купить">
+                </form>
+            </div>
             <? if(strlen($product->variant->sku) > 0): ?>
                 <div>
                      <? echo $product->variant->sku ?>

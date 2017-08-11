@@ -10,10 +10,16 @@ if(isset($_GET['r'])) {
         case 'pages':
             require_once 'pages.php';
             break;
+        case 'thanks':
+            require_once 'thanks.php';
+            break;
+        case 'cart':
+            require_once 'cart.php';
+            break;
         default:
             require_once 'products.php';
             break;
-    }
+    }  
 } else {
     require_once 'products.php';
 }
