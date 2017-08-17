@@ -1,4 +1,5 @@
 <?php require_once 'html/functions.php' ?>
+<?php $cart = getCart($products) ?>
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -8,14 +9,17 @@
     <link rel="stylesheet" href="css/bootstrap-theme.css">
 </head>
 <body>
-
     <div class="row">
         <div class="bg-info col-lg-12">
             <?php viewMenu($pages) ?>
         </div>
     </div>
-
-
+    <div class="col-lg-12">
+        <div class="col-lg-4">
+            <a href="?r=cart">Корзина:</a> <?php echo $cart->total_amount;?>
+            на сумму <?php echo $cart->total_price;?> грн.
+        </div>
+    </div>
     <div class="row">
         <div class="container">
             <div class="col-lg-4 panel panel-default">

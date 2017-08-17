@@ -22,10 +22,11 @@
                 <?php endif;?>
             </div>
             <div>
-                <form method="get">
-                    <input type="number" name="amount" value="1">
-                    <input type="hidden" name="product_id" value=<?php echo $id ?>>
-                    <input type="submit" name="buy" value="Купить">
+                <form method="post">
+                    <input type="hidden" name="r" value="<?php echo $_GET['r'] ?>">
+                    <input type="hidden" name="id" value="<?php echo $product->id ?>">
+                    <input type="number" name="amount" value="1" min="1" max="50">
+                    <button type="submit">Купить</button>
                 </form>
             </div>
             <? if(strlen($product->variant->sku) > 0): ?>

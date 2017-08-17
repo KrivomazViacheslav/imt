@@ -1,28 +1,31 @@
 <?php
 header('Content-Type: text/html; charset=utf-8');
+
 if(isset($_SERVER) && $_SERVER['HTTP_HOST'] && $_SERVER['REQUEST_URI']) {
-    setcookie('lastURI', $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], time()+3600*24*30, '/');
+    setcookie('lastURI', $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], time()+60*60*24*30, '/');
 }
-setcookie('time', date('m-d-Y:H:i:s'), time()+3600*24*30, '/');
-if(isset($_GET) && $_GET['amount']) {
-    $product_id = strip_tags(trim($_GET['product_id']));
-    $amount     = strip_tags(trim($_GET['amount']));
-    $cart       = array();
-    if($_COOKIE['cart']) {
+setcookie('time', date('m-d-Y:H:i:s'), time()+60*60*24*30, '/');
+
+if(isset($_POST['amount']) && isset($_POST['id'])) {
+    $cart = array();
+    $product_id = trim(strip_tags($_POST['id']));
+    $amount = trim(strip_tags($_POST['amount']));
+    if(isset($_COOKIE['cart'])) {
         $cart = unserialize($_COOKIE['cart']);
-        $cart[$product_id] = $amount;
-        setcookie('cart',serialize($cart),time()+3600*24*30,'/');
-    } else {
-        $cart[$product_id] = $amount;
-        setcookie('cart',serialize($cart),time()+3600*24*30,'/');
     }
+    $cart[$product_id] = $amount;
+    setcookie('cart',serialize($cart),time()+(60*60*24*30),'/');
+
     header('Location: http://imt/cms/index.php?r=thanks');
 }
+
 ini_set('display_errors',true);
 error_reporting(E_ALL);
+
 require_once 'data/menu.php';
 require_once 'data/categories.php';
 require_once 'data/products.php';
+
 /*Построение дерева категорий*/
 function makeTree($categories,$parent_id=0) {
     $results=array();
@@ -73,11 +76,6 @@ function viewMenu($pages) {
                 }
             }
         }
-        if (isset($_COOKIE['cart'])) {
-            $cart = unserialize($_COOKIE['cart']);
-            $cnt  = count($cart);
-            echo "<li class='nav-link'><a href='?r=cart'>Ваша корзина – $cnt товаров</a></li>";
-        }
         echo '</ul>';
     }
 }
@@ -101,4 +99,24 @@ function getProduct($products,$id) {
     if($id) {
         return $products[$id];
     }
+}
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+function getCart($products) {
+    $cart_products = array();
+    $total_amount = 0;
+    $total_price = 0;
+    $cart = new stdClass();
+    if(isset($_COOKIE['cart'])) {
+        $ids = unserialize($_COOKIE['cart']);
+        foreach ($ids as $id=>$amount) {
+            $cart_products[$id] = getProduct($products,$id);
+            $cart_products[$id]->amount = $amount;
+            $total_price += $cart_products[$id]->variant->price*$amount;
+            $total_amount += $amount;
+        }
+        $cart->items = $cart_products;
+    }
+    $cart->total_price = $total_price;
+    $cart->total_amount = $total_amount;
+    return $cart;
 }
