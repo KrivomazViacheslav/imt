@@ -16,7 +16,23 @@ if(isset($_POST['amount']) && isset($_POST['id'])) {
     $cart[$product_id] = $amount;
     setcookie('cart',serialize($cart),time()+(60*60*24*30),'/');
 
-    header('Location: http://imt/cms/index.php?r=thanks');
+    //header('Location: http://imt/cms/index.php?r=thanks');
+    $path = '?r='.$_POST['r'].'&id='.$_POST['id'];
+    header("Location: $path");
+}
+
+if(isset($_POST['wishes']) && isset($_POST['id'])) {
+    $wishes = array();
+    $product_id = trim(strip_tags($_POST['id']));
+    $amount = 1;
+    if(isset($_COOKIE['wishes'])) {
+        $wishes = unserialize($_COOKIE['wishes']);
+    }
+    $wishes[$product_id] = $amount;
+    setcookie('wishes',serialize($wishes),time()+(60*60*24*30),'/');
+
+    $path = '?r='.$_POST['r'].'&id='.$_POST['id'];
+    header("Location: $path");
 }
 
 ini_set('display_errors',true);
@@ -25,6 +41,38 @@ error_reporting(E_ALL);
 require_once 'data/menu.php';
 require_once 'data/categories.php';
 require_once 'data/products.php';
+
+if(isset($_POST['order']) && $_POST['order']) {
+
+    $name    = $_POST['name'];
+    $surname = $_POST['surname'];
+    $email   = $_POST['email'];
+    $phone   = $_POST['phone'];
+    $address = $_POST['address'];
+    $comment = $_POST['comment'];
+
+    $file = fopen('orders.txt', 'a+');
+    fwrite($file, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n".
+        'Имя: '.$name."\r\n".
+        'Фамилия: '.$surname."\r\n".
+        'Email: '.$email."\r\n".
+        'Телефон: '.$phone."\r\n".
+        'Адрес доставки: '.$address."\r\n".
+        'Комментарий: '.$comment."\r\n".
+        'Список товаров:'."\r\n");
+    $cart= getCart($products);
+    $cnt = 0;
+    foreach ($cart->items as $item) {
+        $cnt += 1;
+        fwrite($file, $cnt.'. '.$item->name.' - '.$item->amount.' шт - '.$item->variant->price." грн\r\n");     
+    }
+    fclose($file);
+
+    setcookie('cart','',time()-(60*60),'/');
+    $path = '?r=cart';
+    header("Location: $path");
+
+}
 
 /*Построение дерева категорий*/
 function makeTree($categories,$parent_id=0) {
@@ -119,4 +167,21 @@ function getCart($products) {
     $cart->total_price = $total_price;
     $cart->total_amount = $total_amount;
     return $cart;
+}
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+function getWishes($products) {
+    $wishes_products = array();
+    $total_amount = 0;
+    $wishes = new stdClass();
+    if(isset($_COOKIE['wishes'])) {
+        $ids = unserialize($_COOKIE['wishes']);
+        foreach ($ids as $id=>$amount) {
+            $wishes_products[$id] = getProduct($products,$id);
+            $wishes_products[$id]->amount = $amount;
+            $total_amount += $amount;
+        }
+        $wishes->items = $wishes_products;
+    }
+    $wishes->total_amount = $total_amount;
+    return $wishes;
 }

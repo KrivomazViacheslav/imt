@@ -29,6 +29,14 @@
                     <button type="submit">Купить</button>
                 </form>
             </div>
+             <div>
+                <form method="post">
+                    <input type="hidden" name="r" value="<?php echo $_GET['r'] ?>">
+                    <input type="hidden" name="id" value="<?php echo $product->id ?>">
+                    <input type="hidden" name="wishes" value="1">
+                    <button type="submit">В список желаний</button>
+                </form>
+            </div>
             <? if(strlen($product->variant->sku) > 0): ?>
                 <div>
                      <? echo $product->variant->sku ?>

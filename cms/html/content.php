@@ -16,6 +16,9 @@ if(isset($_GET['r'])) {
         case 'cart':
             require_once 'cart.php';
             break;
+        case 'wishes':
+            require_once 'wishes.php';
+            break;
         default:
             require_once 'products.php';
             break;

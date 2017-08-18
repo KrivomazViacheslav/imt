@@ -1,5 +1,6 @@
 <?php require_once 'html/functions.php' ?>
-<?php $cart = getCart($products) ?>
+<?php $cart= getCart($products) ?>
+<?php $wishes = getWishes($products) ?>
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -18,6 +19,9 @@
         <div class="col-lg-4">
             <a href="?r=cart">Корзина:</a> <?php echo $cart->total_amount;?>
             на сумму <?php echo $cart->total_price;?> грн.
+        </div>
+        <div class="col-lg-4">
+            <a href="?r=wishes">Желания:</a> <?php echo $wishes->total_amount;?>
         </div>
     </div>
     <div class="row">
