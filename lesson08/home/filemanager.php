@@ -7,6 +7,10 @@
 	</form>
 
 	<?php
+	$dirName = 'download';
+	if (!file_exists($dirName)) {
+		mkdir($dirName);
+	}
 	$ext = array('png','gif','jpg','jpeg');
 	if($_SERVER["REQUEST_METHOD"] == "POST") {
 		$cnt = 0;
@@ -16,10 +20,10 @@
 	    	$file_ext = pathinfo($name,PATHINFO_EXTENSION);
 	    	$base = pathinfo($name, PATHINFO_FILENAME);
 		    if(in_array($file_ext, $ext)) {
-		        while (file_exists('download/'.$name)) {
+		        while (file_exists($dirName.'/'.$name)) {
 		            $name = $base.'_'.uniqid().'.'.$file_ext;
 		        }
-		        $res = move_uploaded_file($file,'download/'.$name);
+		        $res = move_uploaded_file($file, $dirName.'/'.$name);
 		        if($res) {
 		        	$cnt += 1;
 		        } else {
@@ -50,17 +54,19 @@
 
 <div style="position: absolute; right: 0; width: 50%;">
 	<?php
-	$dir = opendir("download");
-	while ($item = readdir($dir)) {
-	    if ($item == '.' || $item == '..') {
-	        continue;
-	    }
-	    $file_ext = pathinfo($item, PATHINFO_EXTENSION);
-	    if(!in_array($file_ext, $ext)){
-	    	continue;	
-	    }
-		echo $item."<br>";
-	}
-	closedir($dir);
-	?>
+	if (file_exists($dirName)) {
+		$dir = opendir($dirName);
+		while ($item = readdir($dir)) {
+		    if ($item == '.' || $item == '..') {
+		        continue;
+		    }
+		    $file_ext = pathinfo($item, PATHINFO_EXTENSION);
+		    if(!in_array($file_ext, $ext)){
+		    	continue;	
+		    }
+			echo $item."<br>";
+		}
+		closedir($dir);
+	}	
+?>
 </div>
