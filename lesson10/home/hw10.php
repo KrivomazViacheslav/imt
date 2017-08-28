@@ -23,46 +23,81 @@
 <?php
 if(isset($_POST['registration'])) {
 
-    $login    = $_POST['login'];
-    $password = $_POST['password'];
+    $arrValues = array();
+    $arrValues['login']	   = $_POST['login'];
+    $arrValues['password'] = $_POST['password'];
+    $errors = validation($arrValues);
 
-    if (!preg_match('/^[a-z0-9]{4,}$/i', $login)) {
-    	echo 'Логин не прошел проверку!<br>';
-    }
-    if (!preg_match('/^[a-z0-9\/*?-]{4,}$/i', $password)) {
-    	echo 'Пароль не прошел проверку!<br>';
-    }
-
-    $res = addUser($login, $password);
-
-    if ($res) {
-    	echo 'Пользователь добавлен';
-    } else {
-    	echo 'Пользователь не добавлен';
-    }
+    if (count($errors) == 0) {
+    	$res = addUser($arrValues['login'], $arrValues['password']);
+	    if ($res) {
+	    	echo 'Пользователь добавлен';
+	    } else {
+	    	echo 'Пользователь не добавлен';
+	    }
+	} else {
+		displayErrors($errors);	
+	}
 }
 
 if(isset($_POST['authorization'])) {
 
-	$login    = $_POST['login'];
-    $password = $_POST['password'];
+    $arrValues = array();
+    $arrValues['login']	   = $_POST['login'];
+    $arrValues['password'] = $_POST['password'];
+    $errors = validation($arrValues);
 
-    if (!preg_match('/^[a-z0-9]{4,}$/i', $login)) {
-    	echo 'Логин не прошел проверку!<br>';
-    }
-    if (!preg_match('/^[a-z0-9\/*?-]{4,}$/i', $password)) {
-    	echo 'Пароль не прошел проверку!<br>';
-    }
-
-    $res = getUser($login, $password);
-
-    if ($res) {
-    	echo 'Пользователь найден';
+    if (count($errors) == 0) {
+    	$res = getUser($arrValues['login'], $arrValues['password']);
+    	if ($res) {
+    		echo 'Пользователь найден';
+    	} else {
+    		echo 'Пользователь не найден';
+    	}	
     } else {
-    	echo 'Пользователь не найден';
+    	displayErrors($errors);
     }
+}
 
-}    
+function validation($arrValues) {
+
+	$errors = array();
+
+	foreach ($arrValues as $type => $value) {
+		switch ($type) {
+			case 'login':
+				$pattern = '/^[a-z0-9\-]{2,}$/i';
+				if (!preg_match($pattern, $value)) {
+    				$errors[$type] = 'incorrect';
+    			}
+				break;
+			case 'password':
+				$pattern = '/^[a-z0-9]{4,}$/i';
+				if (!preg_match($pattern, $value)) {
+    				$errors[$type] = 'incorrect';
+    			}
+				break;
+		}
+	}
+
+	return $errors; 
+
+}
+
+function displayErrors($errors) {
+	foreach ($errors as $type => $value) {
+		switch ($type) {
+			case 'login':
+				echo 'Логин некорректный!<br>';
+				break;
+			case 'password':
+				echo 'Пароль некорректный!<br>';
+				break;
+			default:
+				echo 'Тип ошибки не определен!<br>';
+		}
+    }
+}
 
 function addUser($login, $password) {
 
