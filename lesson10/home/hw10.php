@@ -1,4 +1,7 @@
-<?php header('Content-Type: text/html; charset=utf-8'); ?>
+<?php
+header('Content-Type: text/html; charset=utf-8');
+session_start();
+?>
 
 <form method="post">
 	<lebel>Логин:</lebel>
@@ -10,15 +13,21 @@
 	<input type="submit" name="registration" value="Регистрация">
 </form>
 
-<form method="post">
-	<lebel>Логин:</lebel>
-	<input type="text" name="login">
-	<br><br>
-	<lebel>Пароль:</lebel>
-	<input type="password" name="password">
-	<br><br>
-	<input type="submit" name="authorization" value="Вход">
-</form>
+<?php if($_SESSION['login']) :?>
+	<form method="post">
+		<input type="submit" name="exit" value="Выход">
+	</form>
+<?php else:?>
+	<form method="post">
+		<lebel>Логин:</lebel>
+		<input type="text" name="login">
+		<br><br>
+		<lebel>Пароль:</lebel>
+		<input type="password" name="password">
+		<br><br>
+		<input type="submit" name="authorization" value="Авторизация">
+	</form>
+<?php endif;?>
 
 <?php
 if(isset($_POST['registration'])) {
@@ -57,6 +66,10 @@ if(isset($_POST['authorization'])) {
     } else {
     	displayErrors($errors);
     }
+}
+
+if(isset($_POST['exit'])) {
+	$_SESSION['login'] = false;
 }
 
 function validation($arrValues) {
@@ -126,6 +139,7 @@ function getUser($login, $password) {
 		if ($userData[0] == $login) {
 			if (password_verify($password, $userData[1])) {
 				$success = true;
+				$_SESSION['login'] = true;
 			}
 		}
 	}
