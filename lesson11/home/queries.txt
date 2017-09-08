@@ -1,0 +1,5 @@
+SELECT name, email FROM users
+SELECT * FROM users WHERE group_id = 1
+SELECT name, email, phone FROM users WHERE phone LIKE "%(33)%"
+UPDATE users SET email = "user7@mail.com" WHERE id = 7
+UPDATE users SET group_id = 3 WHERE phone LIKE "+380%"
