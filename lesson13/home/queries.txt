@@ -1,0 +1,53 @@
+﻿/*
+Задача 1
+1) Вибрати id замовлення та відповідних користувачів з таблиці users,
+в яких записи в таблиці orders мають status = 0.
+*/
+SELECT o.order_id,
+       IFNULL(u.name, 'No user'),
+       o.status
+FROM orders o
+LEFT JOIN users u ON o.users_id = u.users_id
+WHERE o.status = 0
+/*
+2) Вибрати користувачів в яких є невиконані замовлення, status = 0.
+*/
+SELECT u.name
+FROM users u
+INNER JOIN orders o ON u.users_id = o.users_id
+WHERE o.status = 0
+GROUP BY u.name
+/*
+3) Вибрати id, ім'я, та кількість замовлень всіх користувачів з таблиці users,
+в яких 3 і більше записів поля 'status' = 1 в таблиці orders.
+*/
+SELECT u.users_id,
+       u.name,
+       COUNT(o.order_id)
+FROM users u
+INNER JOIN orders o ON u.users_id = o.users_id
+WHERE o.status = 1
+GROUP BY u.name
+HAVING COUNT(o.order_id) >= 3
+/*
+Задача 2
+1. Вивести значення id, cpu, memory комп'ютерів в яких об'єм памяті 3000 Mb.
+*/
+SELECT id,
+       cpu,
+       memory
+FROM pc
+WHERE memory = 3000
+/*
+2. Вивести мінімальний об'єм жорсткого диску, що є на складі. Вивести Hdd.
+*/
+SELECT MIN(hdd)
+FROM pc
+/*
+3. Вивести кількість комп'ютерів з мінімальним об'ємом жорсткого диску, що є на складі.
+Вивести count, hdd.
+*/
+SELECT COUNT(id),
+       hdd
+FROM pc
+WHERE hdd = (SELECT MIN(hdd) FROM pc)
