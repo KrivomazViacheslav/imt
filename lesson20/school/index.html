@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+<h1 id="id_5" class="test">JQuery</h1>
+
+<label>Name</label>
+<input class="in_1" type="text" value="test">
+<span class="btn_1">CLICK</span>
+
+<select class="sl_1">
+	<option value="1">1</option>
+	<option value="2">2</option>
+	<option value="3">3</option>
+	<option value="4">4</option>
+	<option value="5">5</option>
+</select>
+
+<input type="text" class="res_1" value="">
+
+<div class="res_2">result</div>
+
+<style>
+	.arrow {
+		display: inline-block;
+		width: 20px;
+		height: 20px;
+		position: relative;
+	}
+	.arrow:after {
+		position: absolute;
+		content: '';
+		border: 10px solid transparent;
+		border-top: 10px solid green;
+	}
+</style>
+
+<div>
+	<ul>
+		<li class="toggle">
+			<a class="menu" href="">пункт 1</a>
+			<span class="arrow"></span>
+			<ul class="sub" style="display: none;">
+				<li>пункт 2</li>
+				<li>пункт 3</li>
+				<li>пункт 4</li>
+				<li>пункт 5</li>
+				<li>пункт 6</li>
+				<li>пункт 7</li>
+				<li>пункт 8</li>
+				<li>пункт 9</li>
+			</ul>
+		</li>	
+	</ul>
+</div>
+
+<div>
+	<label>Name</label>
+	<input class="ajax_name" type="text" name="name" value="">
+	<span class="ajax_btn">OK</span>
+</div>
+
+<div class="ajax_result">
+	
+</div>
+
+<button class="get_res">GET</button>
+
+</body>
+
+<script type="text/javascript" src="jquery.min.js"></script>
+<script>
+	$(function() {
+		/*$('.btn_1').on('click', function() {
+			$('.res_1').val($('.in_1').val());
+		})*/
+
+		$('.in_1').on('change', function() {
+			$('.res_1').val($(this).val());
+		})
+
+		$('.in_1').on('keyup', function() {
+			$('.res_2').text($(this).val());
+		})
+
+		$('.sl_1').on('change', function() {
+			$('.res_1').val($(this).val());
+		})
+
+		$('.btn_1').on('click', function() {
+			$('.res_1').val($('.sl_1').val());
+		})
+
+		$('.arrow').on('click', function() {
+			//e.preventDefault();
+			$(this).closest('.toggle').find('.sub').slideToggle(500);
+		})
+
+
+		$('.ajax_btn').on('click', function() {
+			var name = $('.ajax_name').val();
+
+			$.ajax({
+				method: "POST",
+				url: "ajax.php",
+				dataType: 'json',
+				data: {
+					name: name,
+					age: '25'
+				},
+				success: function(data) {
+					if (data.res) {
+						$('.ajax_result').text(data.data);
+						$('.ajax_result').append('<input type="text" name="res" value="' + data.data + '">');
+					}
+				}
+			})
+		})
+
+
+		$('.get_res').on('click', function() {
+			alert($('input[name=res]').val());
+		})
+
+		$('input[name=res]').on('change', function() {
+			alert($(this).val() + '1');
+		})
+
+		$(document).on('change', 'input[name=res]', function() {
+			alert($(this).val() + '2');
+		})
+			
+
+	});
+	console.log($('#id_5'));
+</script>
+
+</html>
